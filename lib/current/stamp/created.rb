@@ -8,7 +8,11 @@ module Current
           raise Current::Error,'argument error. created_stamp(field,clazz)\'s clazz must be Class' unless clazz.class==Class
           raise Current::Error,"#{clazz} must include Current::Document" unless clazz.include? Current::Document
           class_eval do
-            belongs_to field, options.merge(:class_name=>clazz.to_s)
+            if options.delete(:related)
+              belongs_to_related field, options.merge(:class_name=>clazz.to_s)
+            else
+              belongs_to field, options.merge(:class_name=>clazz.to_s)
+            end
             before_validation "set_#{field}", :on=>:create
           end
 
